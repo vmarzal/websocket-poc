@@ -1,0 +1,53 @@
+asyncapi: 3.0.0
+info:
+  title: Parrot API
+  version: 0.0.1
+
+servers:
+  development:
+    host: localhost:8080
+    protocol: ws
+
+channels:
+  squawk:
+    address: squawk
+    messages:
+      SquawkRequest:
+        payload:
+          $ref: '#/components/schemas/SquawkSchema'
+      SquawkResponse:
+        payload:
+          $ref: '#/components/schemas/SquawkResponse'          
+
+operations:
+  onSquawkRequest:
+    action: receive
+    channel: 
+      $ref: '#/channels/squawk'
+    messages:
+    - $ref: '#/channels/squawk/messages/SquawkRequest'
+    reply:
+      channel:
+        $ref: '#/channels/squawk'
+      messages: 
+        - $ref: '#/channels/squawk/messages/SquawkResponse'
+
+components:
+  schemas:
+    SquawkSchema:
+      type: object
+      additionalProperties: false
+      properties:
+        message: 
+          type: string
+          description: The message you want the Parrot says
+        repeats:
+          type: integer
+          description: Times to want the Parrot repeats
+          minimum: 1
+          default: 1
+    SquawkResponse: 
+      type: string
+      description: The message the Parrot will squawk
+
+
